@@ -7,10 +7,11 @@
   <meta name="description" content="박은학의 포트폴리오입니다. 사내 AI Agent 챗봇, 스마트 택배 보관함, 영화 리뷰 분석 등 실제 프로젝트를 소개합니다." />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <style>
 /* ================================================
    PORTFOLIO - DARK MODE STYLE
-   Author: 박은학학
+   Author: 박은학
    ================================================ */
 
 /* ===== RESET & BASE ===== */
@@ -1639,7 +1640,7 @@ img { max-width: 100%; }
           <span class="badge-dot"></span> Backend · AI Engineer Portfolio
         </div>
         <h1 class="hero-title reveal-up">
-          문제를 구조화해<br />
+          문제를 구조화하는<br />
           <span class="gradient-text">서비스로 구현하는</span><br />
           박은학입니다
         </h1>
@@ -2252,20 +2253,16 @@ img { max-width: 100%; }
       </div>
       <div class="contact-grid">
         <div class="contact-info reveal-left">
-          <h3 class="contact-info-title">바로 제출 가능한 형태로 정리했습니다</h3>
-          <p class="contact-info-desc">
-            프로젝트 소개, 기술 스택, 이력 흐름까지 한 번에 볼 수 있도록 구성했습니다.
-            실제 제출 전에는 이메일, GitHub, 배포 링크만 연결하면 바로 활용할 수 있습니다.
-          </p>
+          
           <div class="contact-links">
-            <a href="#" class="contact-link-item">
+            <a href="mailto:a01093173185@gmail.com" class="contact-link-item">
               <div class="contact-link-icon"><i class="fas fa-envelope"></i></div>
               <div class="contact-link-info">
                 <span class="contact-link-label">이메일</span>
-                <span class="contact-link-value">dmsgkrdmstjr@naver.com</span>
+                <span class="contact-link-value">a01093173185@gmail.com</span>
               </div>
             </a>
-            <a href="#" class="contact-link-item">
+            <a href="https://github.com/tyler0921" target="_blank" rel="noopener noreferrer" class="contact-link-item">
               <div class="contact-link-icon"><i class="fab fa-github"></i></div>
               <div class="contact-link-info">
                 <span class="contact-link-label">GitHub</span>
@@ -2303,11 +2300,9 @@ img { max-width: 100%; }
               <span class="form-error" id="messageError"></span>
             </div>
             <button type="submit" class="btn btn-primary btn-full">
-              <i class="fas fa-paper-plane"></i> 데모 폼 확인
+              <i class="fas fa-paper-plane"></i> 메시지 보내기
             </button>
-            <div class="form-success" id="formSuccess" style="display:none;">
-              <i class="fas fa-check-circle"></i> 데모 폼이 정상 동작합니다.
-            </div>
+            <div class="form-success" id="formSuccess" style="display:none;"></div>
           </form>
         </div>
       </div>
@@ -2331,9 +2326,9 @@ img { max-width: 100%; }
           <a href="#contact">연락</a>
         </div>
         <div class="footer-social">
-          <a href="#" class="social-btn" title="GitHub"><i class="fab fa-github"></i></a>
-          <a href="#" class="social-btn" title="포트폴리오"><i class="fas fa-folder-open"></i></a>
-          <a href="#" class="social-btn" title="이메일"><i class="fas fa-envelope"></i></a>
+          <a href="https://github.com/tyler0921" target="_blank" rel="noopener noreferrer" class="social-btn" title="GitHub"><i class="fab fa-github"></i></a>
+          <a href="#projects" class="social-btn" title="포트폴리오"><i class="fas fa-folder-open"></i></a>
+          <a href="mailto:a01093173185@gmail.com" class="social-btn" title="이메일"><i class="fas fa-envelope"></i></a>
         </div>
       </div>
       <div class="footer-bottom">
@@ -2348,13 +2343,18 @@ img { max-width: 100%; }
   <script>
 /* ================================================
    PORTFOLIO - MAIN JAVASCRIPT
-   Author: 홍길동
+   Author: 박은학
    ================================================ */
 
 'use strict';
 
+const EMAILJS_PUBLIC_KEY  = 'mTIkxX6MIgjF_LPmc';   // EmailJS Public Key
+const EMAILJS_SERVICE_ID  = 'service_aihixa4';   // EmailJS Service ID
+const EMAILJS_TEMPLATE_ID = 'template_xs8g6v8';  // EmailJS Template ID
+
 /* ===== DOM READY ===== */
 document.addEventListener('DOMContentLoaded', () => {
+  emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
   initNavbar();
   initHamburger();
   initParticles();
@@ -2668,21 +2668,30 @@ function simulateFormSubmit(form) {
   const btn = form.querySelector('button[type="submit"]');
   const success = document.getElementById('formSuccess');
 
-  // Loading state
+  const name    = document.getElementById('name').value.trim();
+  const email   = document.getElementById('email').value.trim();
+  const subject = document.getElementById('subject').value.trim() || '포트폴리오 문의';
+  const message = document.getElementById('message').value.trim();
+
   btn.disabled = true;
   btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 전송 중...';
 
-  // Simulate API call
-  setTimeout(() => {
+  emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+    from_name:  name,
+    from_email: email,
+    subject:    subject,
+    message:    message,
+  })
+  .then(() => {
     btn.innerHTML = '<i class="fas fa-check"></i> 전송 완료!';
     btn.style.background = 'linear-gradient(135deg, #22c55e, #16a34a)';
 
     if (success) {
+      success.textContent = '✉️ 이메일이 성공적으로 전송되었습니다!';
       success.style.display = 'flex';
       success.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 
-    // Reset after 4 seconds
     setTimeout(() => {
       form.reset();
       btn.disabled = false;
@@ -2690,7 +2699,18 @@ function simulateFormSubmit(form) {
       btn.style.background = '';
       if (success) success.style.display = 'none';
     }, 4000);
-  }, 1500);
+  })
+  .catch((error) => {
+    console.error('EmailJS 오류:', error);
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fas fa-paper-plane"></i> 메시지 보내기';
+
+    if (success) {
+      success.textContent = '❌ 전송에 실패했습니다. 잠시 후 다시 시도해 주세요.';
+      success.style.display = 'flex';
+      success.style.color = '#f87171';
+    }
+  });
 }
 
 /* ===== BACK TO TOP ===== */
